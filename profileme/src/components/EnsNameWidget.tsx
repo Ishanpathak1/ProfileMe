@@ -277,6 +277,16 @@ prev, clean]));
                     <span className="badge" style={{ backgroundColor: "rgba(var(--accent-rgb), 0.14)", color: "var(--accent)", border: "1px solid rgba(var(--accent-rgb), 0.35)", padding: "6px 10px" }}>
                       {registeredLabel}.{DISPLAY_ROOT}
                     </span>
+                    <div style={{ marginTop: 8 }}>
+                      <a
+                        href={`https://sepolia.app.ens.domains/${registeredLabel}.${DISPLAY_ROOT}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-xs btn-outline-primary"
+                      >
+                        Open on Sepolia ENS
+                      </a>
+                    </div>
                   </div>
                 ) : null}
               </div>
