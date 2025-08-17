@@ -183,6 +183,8 @@ export const wagmiConfig = getDefaultConfig({
   projectId,
   chains: supportedChains,
   ssr: false,
+  // Prevent eager auto-connect to avoid wallet throwing errors when user not ready
+  autoConnect: false,
   transports: Object.fromEntries(supportedChains.map((c) => [c.id, buildTransport(c)])),
 });
 
