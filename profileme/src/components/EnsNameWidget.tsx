@@ -4,10 +4,12 @@ import confetti from "canvas-confetti";
 import { useAccount, useChainId, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { Address } from "viem";
 import { getPrimaryNameForAddress, sanitizeLabel, l2IsAvailable, DEFAULT_L2_REGISTRAR_ADDRESS, getSafeOwnerAddress, isAcceptableLabel } from "@/lib/ens";
+import { useAuthStore } from "@/store/auth";
 
 type Suggestion = { label: string; fqdn: string; available: boolean };
 
 export default function EnsNameWidget() {
+  const { isSoundVerified } = useAuthStore();
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { chains, switchChainAsync } = useSwitchChain();
@@ -87,7 +89,7 @@ prev, clean]));
   }, [isMined]);
 
   useEffect(() => {
-    if (!isConnected || !address) {
+    if (!isSoundVerified || !isConnected || !address) {
       setPrimary(null);
       return;
     }
@@ -101,12 +103,12 @@ prev, clean]));
     return () => {
       cancelled = true;
     };
-  }, [address, isConnected]);
+  }, [address, isConnected, isSoundVerified]);
 
   const hasPrimary = Boolean(primary);
 
-  const canSuggest = useMemo(() => Boolean(isConnected && address && !loadingSuggest), [isConnected, address, loadingSuggest]);
-  const canRegister = useMemo(() => Boolean(isConnected && address && !busy && !isMining), [isConnected, address, busy, isMining]);
+  const canSuggest = useMemo(() => Boolean(isSoundVerified && isConnected && address && !loadingSuggest), [isSoundVerified, isConnected, address, loadingSuggest]);
+  const canRegister = useMemo(() => Boolean(isSoundVerified && isConnected && address && !busy && !isMining), [isSoundVerified, isConnected, address, busy, isMining]);
   const isLabelAcceptable = useMemo(() => {
     const clean = sanitizeLabel(selectedLabel).slice(0, 16);
     return Boolean(clean) && isAcceptableLabel(clean);
@@ -129,7 +131,7 @@ prev, clean]));
   }
 
   async function generateSuggestion() {
-    if (!canSuggest || !address) return;
+    if (!isSoundVerified || !canSuggest || !address) return;
     setLoadingSuggest(true);
     try {
       setBusy("Summarizing wallet…");
@@ -211,11 +213,13 @@ prev, clean]));
 
   // Auto-generate a suggestion when user connects or address changes
   useEffect(() => {
-    if (isConnected && address && !selectedLabel && !loadingSuggest) {
+    if (isSoundVerified && isConnected && address && !selectedLabel && !loadingSuggest) {
       void generateSuggestion();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, address]);
+  }, [isSoundVerified, isConnected, address]);
+
+  if (!isSoundVerified) return null;
 
   return (
     <div className="elevated section" style={{ marginTop: 12, borderRadius: 14, padding: 16 }}>

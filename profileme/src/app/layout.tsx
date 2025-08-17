@@ -16,8 +16,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SecureMe — Multi-Chain Dashboard",
-  description: "WalletConnect + Infura-backed multi-chain dashboard with resilient fallbacks",
+  title: "ProfileMe — Ultrasound Auth + Multi-Chain Dashboard",
+  description: "Ultrasound-based authentication with real-time onchain data from The Graph, ENS AI names, and AI wallet overviews.",
 };
 
 export default function RootLayout({
