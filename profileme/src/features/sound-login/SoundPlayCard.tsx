@@ -103,24 +103,16 @@ export default function SoundPlayCard() {
   }, [chainId, isConnected, refetch]);
 
   return (
-    <div className="section" style={{ background: "#0d1117", border: "1px solid #1f2a37", borderRadius: 12, padding: 16, color: "#d1d5db" }}>
+    <div className="section elevated" style={{ borderRadius: 12, padding: 16 }}>
       <div className="flex items-center justify-between" style={{ marginBottom: 12 }}>
-        <h4 className="m-0" style={{ fontSize: 16, fontWeight: 600, color: "#e5e7eb" }}>Emit Login Sound</h4>
+        <h4 className="m-0 section-title" style={{ fontSize: 16, fontWeight: 700 }}>Emit Login Sound</h4>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button
           onClick={handlePlay}
           disabled={!canUse || isPlaying}
-          style={{
-            background: isPlaying ? "#374151" : "#1f6feb",
-            color: "#0b1020",
-            border: 0,
-            borderRadius: 8,
-            padding: "10px 14px",
-            cursor: !canUse || isPlaying ? "not-allowed" : "pointer",
-            fontWeight: 600,
-          }}
-          title={!isConnected ? "Connect wallet" : chainId !== zircuitGarfield.id ? "Switch to Zircuit Garfield" : "🔊 Play login sound"}
+          className="btn btn-primary"
+          title={!isConnected ? "Connect wallet" : chainId !== zircuitGarfield.id ? "Switch to Zircuit Garfield" : "Play login sound"}
         >
           {isPlaying ? "Playing…" : "🔊 Play login sound"}
         </button>
@@ -131,8 +123,8 @@ export default function SoundPlayCard() {
         </div>
       </div>
       {onchainHash && (
-        <div style={{ marginTop: 10, fontSize: 12, color: "#9ca3af" }}>
-          On-chain hash: <span style={{ color: "#93c5fd", fontFamily: "var(--font-mono)" }}>{String(onchainHash).slice(0, 10)}…</span>
+        <div style={{ marginTop: 10, fontSize: 12 }} className="muted">
+          On-chain hash: <span style={{ color: "var(--accent)", fontFamily: "var(--font-mono)" }}>{String(onchainHash).slice(0, 10)}…</span>
         </div>
       )}
     </div>

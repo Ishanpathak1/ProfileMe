@@ -22,8 +22,8 @@ export default function Home() {
     <div className="px-6 py-5 max-w-7xl mx-auto" style={{ minHeight: "100vh" }}>
       <div className="flex items-center justify-between mb-6 section">
         <div>
-          <h3 className="m-0 text-xl font-semibold" style={{ color: "var(--foreground)" }}>ProfileMe — Multi-Chain Dashboard</h3>
-          <div className="text-sm muted">Track balances and recent activity across chains. WalletConnect + Infura with resilient fallbacks.</div>
+          <h3 className="m-0 text-xl section-title">ProfileMe — Multi-Chain Dashboard</h3>
+          <div className="text-sm muted">Track balances and activity across chains. WalletConnect + Infura with resilient fallbacks.</div>
         </div>
         <ConnectButton />
       </div>
@@ -39,8 +39,8 @@ export default function Home() {
               window.location.reload();
             }}
             style={{
-              background: "#1f6feb",
-              color: "#0b1020",
+              background: "var(--accent)",
+              color: "#0a0e18",
               border: 0,
               borderRadius: 8,
               padding: "6px 10px",

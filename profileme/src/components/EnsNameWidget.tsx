@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import confetti from "canvas-confetti";
 import { useAccount, useChainId, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { Address } from "viem";
 import { getPrimaryNameForAddress, sanitizeLabel, l2IsAvailable, DEFAULT_L2_REGISTRAR_ADDRESS, getSafeOwnerAddress, isAcceptableLabel } from "@/lib/ens";
@@ -19,10 +20,69 @@ export default function EnsNameWidget() {
   const [selectedLabel, setSelectedLabel] = useState<string>("");
   const [busy, setBusy] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [pendingLabel, setPendingLabel] = useState<string | null>(null);
+  const [registeredLabel, setRegisteredLabel] = useState<string | null>(null);
+  const DISPLAY_ROOT = process.env.NEXT_PUBLIC_ENS_DISPLAY_ROOT || "profile.eth";
+  const [reservedLabels, setReservedLabels] = useState<string[]>([]);
+
+  // Load locally reserved labels (labels user has registered before) so we never suggest them again
+  useEffect(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem("reservedEnsLabels") : null;
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) setReservedLabels(arr.filter((x) => typeof x === "string"));
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (isMined) {
       setBusy("");
+      if (pendingLabel) {
+        setRegisteredLabel(pendingLabel);
+        setPendingLabel(null);
+        // Persist to local reserved list to avoid suggesting again
+        try {
+          const clean = sanitizeLabel(pendingLabel);
+          setReservedLabels((prev) => {
+            const next = Array.from(new Set([...
+prev, clean]));
+            try { localStorage.setItem("reservedEnsLabels", JSON.stringify(next)); } catch {}
+            return next;
+          });
+        } catch {}
+      }
+      try {
+        const originX = 0.5;
+        const originY = 0.3;
+        confetti({
+          particleCount: 120,
+          spread: 70,
+          startVelocity: 45,
+          ticks: 250,
+          origin: { x: originX, y: originY },
+          colors: ["#37FF8B", "#2ee57c", "#25cc6f", "#e6e9ef"],
+        });
+        setTimeout(() => {
+          confetti({
+            particleCount: 90,
+            angle: 120,
+            spread: 60,
+            startVelocity: 35,
+            origin: { x: 0.2, y: 0.35 },
+            colors: ["#37FF8B", "#e6e9ef"],
+          });
+          confetti({
+            particleCount: 90,
+            angle: 60,
+            spread: 60,
+            startVelocity: 35,
+            origin: { x: 0.8, y: 0.35 },
+            colors: ["#37FF8B", "#e6e9ef"],
+          });
+        }, 200);
+      } catch {}
     }
   }, [isMined]);
 
@@ -82,12 +142,15 @@ export default function EnsNameWidget() {
       });
       const data = (await res.json()) as { suggestions: Suggestion[] };
       const list = data.suggestions || [];
-      setSuggestions(list);
-      const firstAvailable = list.find((s) => s.available);
+      // Filter out any labels we've already registered locally
+      const blocked = new Set(reservedLabels.map((x) => sanitizeLabel(x)));
+      const filtered = list.filter((s) => !blocked.has(sanitizeLabel(s.label)));
+      setSuggestions(filtered);
+      const firstAvailable = filtered.find((s) => s.available);
       if (firstAvailable?.label) {
         setSelectedLabel(firstAvailable.label);
-      } else if (list[0]?.label) {
-        setSelectedLabel(list[0].label);
+      } else if (filtered[0]?.label) {
+        setSelectedLabel(filtered[0].label);
       } else {
         throw new Error("No available suggestions");
       }
@@ -126,6 +189,7 @@ export default function EnsNameWidget() {
       await ensureBaseSepolia();
 
       setBusy("Submitting transaction…");
+      setPendingLabel(clean);
       const hash = await writeContractAsync({
         abi: [
           { inputs: [{ name: "label", type: "string" }, { name: "owner", type: "address" }], name: "register", outputs: [], stateMutability: "nonpayable", type: "function" },
@@ -154,23 +218,23 @@ export default function EnsNameWidget() {
   }, [isConnected, address]);
 
   return (
-    <div className="section" style={{ marginTop: 12 }}>
+    <div className="elevated section" style={{ marginTop: 12, borderRadius: 14, padding: 16 }}>
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="m-0" style={{ fontSize: 16 }}>ENS</h4>
-          <div className="text-sm muted">Your wallet&apos;s primary name and available suggestions.</div>
+          <h4 className="m-0 section-title" style={{ fontSize: 16 }}>ENS</h4>
+          <div className="text-sm muted">Primary name and quick suggestions</div>
         </div>
         {loadingPrimary ? (
-          <span className="text-sm">Resolving…</span>
+          <span className="text-sm muted">Resolving…</span>
         ) : hasPrimary ? (
-          <span className="badge">{primary}</span>
+          <span className="badge" style={{ background: "rgba(var(--accent-rgb), 0.14)", color: "var(--accent)", padding: "6px 10px", border: "1px solid rgba(var(--accent-rgb), 0.35)" }}>{primary}</span>
         ) : (
-          <span className="text-sm">No primary name</span>
+          <span className="text-sm muted">No primary name</span>
         )}
       </div>
 
       <div className="mt-3" />
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" style={{ marginTop: 6 }}>
         <input
           className="input input-sm"
           placeholder="your-name"
@@ -178,11 +242,11 @@ export default function EnsNameWidget() {
           onChange={(e) => setSelectedLabel(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 16))}
         />
         <button
-          className="btn btn-sm"
+          className="btn btn-sm btn-outline-primary"
           disabled={!canSuggest}
           onClick={() => void generateSuggestion()}
         >
-          {loadingSuggest ? "Generating…" : "Suggest name"}
+          {loadingSuggest ? "Generating…" : "Suggest"}
         </button>
         <button
           className="btn btn-sm btn-primary"
@@ -193,14 +257,28 @@ export default function EnsNameWidget() {
         </button>
       </div>
       {!isLabelAcceptable && selectedLabel && (
-        <div className="mt-1 text-xs muted">Pick a more unique pseudoword. Avoid common words or character/brand names.</div>
+        <div className="mt-1 text-xs" style={{ color: "rgba(255,255,255,0.65)" }}>Pick a more unique pseudoword. Avoid common words or character/brand names.</div>
       )}
 
-      {/* Suggestions are kept in state for possible display/debug, but not shown in the simplified flow */}
       {(error || isMined) && (
         <div className="mt-2 text-sm">
           {error ? <div className="text-danger">{error}</div> : null}
-          {isMined ? <div className="text-success">Registration confirmed on L2.</div> : null}
+          {isMined ? (
+            <div className="elevated" style={{ padding: 12, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+              <div>
+                <div style={{ fontWeight: 700, color: "var(--accent)" }}>Success!</div>
+                <div className="muted">Your subdomain has been registered on L2. It may take a moment to propagate.</div>
+                {registeredLabel ? (
+                  <div style={{ marginTop: 8 }}>
+                    <span className="badge" style={{ backgroundColor: "rgba(var(--accent-rgb), 0.14)", color: "var(--accent)", border: "1px solid rgba(var(--accent-rgb), 0.35)", padding: "6px 10px" }}>
+                      {registeredLabel}.{DISPLAY_ROOT}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+              <span className="badge" style={{ backgroundColor: "rgba(var(--accent-rgb), 0.14)", color: "var(--accent)", border: "1px solid rgba(var(--accent-rgb), 0.35)", padding: "6px 10px" }}>🎉</span>
+            </div>
+          ) : null}
         </div>
       )}
     </div>

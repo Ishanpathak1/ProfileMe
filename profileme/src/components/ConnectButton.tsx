@@ -26,8 +26,8 @@ export function ConnectButton() {
                 type="button"
                 className="btn btn-sm"
                 style={{
-                  background: "#37FF8B",
-                  color: "#0B0C2A",
+                  background: "var(--accent)",
+                  color: "#0a0e18",
                   border: 0,
                   borderRadius: 10,
                   padding: "8px 12px",
@@ -45,9 +45,9 @@ export function ConnectButton() {
                     display: "flex",
                     alignItems: "center",
                     gap: 6,
-                    background: "rgba(55,255,139,0.12)",
-                    border: "1px solid rgba(55,255,139,0.35)",
-                    color: "#37FF8B",
+                    background: "rgba(var(--accent-rgb), 0.12)",
+                    border: "1px solid rgba(var(--accent-rgb), 0.35)",
+                    color: "var(--accent)",
                     padding: "6px 10px",
                     borderRadius: 8,
                   }}
@@ -72,8 +72,8 @@ export function ConnectButton() {
                     display: "flex",
                     alignItems: "center",
                     gap: 10,
-                    background: "#37FF8B",
-                    color: "#0B0C2A",
+                    background: "var(--accent)",
+                    color: "#0a0e18",
                     padding: "8px 12px",
                     borderRadius: 10,
                     border: 0,

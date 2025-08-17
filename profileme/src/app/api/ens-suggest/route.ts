@@ -37,7 +37,7 @@ function generateFallbackCandidates(wallet: string, count: number): string[] {
     const b = pseudoFromWallet(wallet, i + 137);
     const joinHyphen = (i % 3) === 0; // sometimes hyphenate
     const candidate = joinHyphen ? sanitizeLabel(`${a}-${b}`) : a;
-    if (candidate && isLabelAcceptable(candidate)) out.push(candidate);
+    if (candidate && isAcceptableLabel(candidate)) out.push(candidate);
   }
   return Array.from(new Set(out)).slice(0, count);
 }

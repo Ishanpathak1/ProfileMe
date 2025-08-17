@@ -5,10 +5,11 @@
   --background-elevated: #0f1524; /* Slightly lighter for cards */
   --foreground: #e6e9ef; /* Soft white */
   --muted: #9aa3b2; /* Secondary text */
-  --accent: #5b9dff; /* Electric blue */
-  --accent-2: #8a6cff; /* Purple */
-  --accent-3: #18e6c3; /* Teal */
-  --ring: rgba(91, 157, 255, 0.45);
+  --accent: #37FF8B; /* Green-teal */
+  --accent-2: #2ee57c; /* Hover */
+  --accent-3: #25cc6f; /* Deeper */
+  --accent-rgb: 55, 255, 139; /* For rgba() usage */
+  --ring: rgba(var(--accent-rgb), 0.45);
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
@@ -20,8 +21,8 @@
 }
 
 body {
-  background: radial-gradient(1200px 600px at 80% -10%, rgba(91, 157, 255, 0.12), transparent 40%),
-              radial-gradient(800px 400px at 0% 10%, rgba(138, 108, 255, 0.12), transparent 40%),
+  background: radial-gradient(1200px 600px at 80% -10%, rgba(var(--accent-rgb), 0.12), transparent 40%),
+              radial-gradient(800px 400px at 0% 10%, rgba(var(--accent-rgb), 0.08), transparent 40%),
               var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -53,10 +54,10 @@ html, body {
 .btn-primary {
   --bs-btn-bg: var(--accent);
   --bs-btn-border-color: var(--accent);
-  --bs-btn-hover-bg: #4c8ef0;
-  --bs-btn-hover-border-color: #4c8ef0;
+  --bs-btn-hover-bg: var(--accent-2);
+  --bs-btn-hover-border-color: var(--accent-2);
   --bs-btn-color: #0a0e18;
-  box-shadow: 0 8px 20px rgba(91, 157, 255, 0.25);
+  box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.25);
 }
 
 .btn-outline-primary {
@@ -65,10 +66,31 @@ html, body {
   --bs-btn-hover-bg: var(--accent);
   --bs-btn-hover-border-color: var(--accent);
   --bs-btn-hover-color: #0a0e18;
-  box-shadow: 0 8px 20px rgba(91, 157, 255, 0.18);
+  box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.18);
 }
 
 .btn:active { transform: translateY(1px); }
+
+/* Force teal theme on Bootstrap primary buttons even if Bootstrap loads after our stylesheet */
+.btn.btn-primary {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #0a0e18 !important;
+}
+.btn.btn-primary:hover, .btn.btn-primary:focus {
+  background-color: var(--accent-2) !important;
+  border-color: var(--accent-2) !important;
+  color: #0a0e18 !important;
+}
+.btn.btn-outline-primary {
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+.btn.btn-outline-primary:hover, .btn.btn-outline-primary:focus {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #0a0e18 !important;
+}
 
 .card {
   background-color: var(--background-elevated);
@@ -103,6 +125,19 @@ html, body {
 }
 
 .form-control::placeholder { color: rgba(230, 233, 239, 0.55); }
+
+/* Lightweight input utility to match simplified components */
+.input {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--foreground);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+}
+.input:hover { border-color: rgba(255, 255, 255, 0.18); }
+.input:focus { box-shadow: 0 0 0 4px var(--ring); border-color: transparent; }
+.input-sm { padding: 8px 10px; border-radius: 10px; }
 
 /* Simple modal for network prompt */
 .katana-modal-backdrop {
@@ -142,17 +177,17 @@ html, body {
   padding: 10px 16px;
   border-radius: 12px;
   font-weight: 600;
-  box-shadow: 0 10px 25px rgba(91, 157, 255, 0.25);
+  box-shadow: 0 10px 25px rgba(var(--accent-rgb), 0.25);
 }
 
 .katana-btn:hover {
-  background-color: #4c8ef0;
+  background-color: var(--accent-2);
   color: #0a0e18;
 }
 
 /* Links */
 a { color: var(--accent); text-decoration: none; }
-a:hover { color: #4c8ef0; }
+a:hover { color: var(--accent-2); }
 
 /* Headings and typography */
 h1, h2, h3, h4, h5, h6 { font-family: var(--font-sans); letter-spacing: -0.02em; }
@@ -180,8 +215,48 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-sans); letter-spacing: -0.02em;
 .navbar, .dropdown-menu, .offcanvas, .modal-content { background-color: var(--background-elevated) !important; color: var(--foreground) !important; }
 .badge { border-radius: 10px; font-weight: 600; }
 
+/* Tables - dark theme */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--foreground);
+  --bs-table-border-color: rgba(255,255,255,0.08);
+}
+.table > :not(caption) > * > * {
+  background-color: transparent !important;
+  color: var(--foreground) !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+}
+.table thead th {
+  color: var(--muted) !important;
+  border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+
+/* Outline secondary to fit dark theme */
+.btn-outline-secondary {
+  --bs-btn-color: rgba(230,233,239,0.9);
+  --bs-btn-border-color: rgba(255,255,255,0.25);
+  --bs-btn-hover-bg: rgba(255,255,255,0.08);
+  --bs-btn-hover-border-color: rgba(255,255,255,0.35);
+  --bs-btn-hover-color: var(--foreground);
+}
+
+/* Subtle separators and headings */
+.section-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  border: 0;
+}
+
 /* Selection */
-::selection { background: rgba(91,157,255,0.35); color: #0a0e18; }
+::selection { background: rgba(var(--accent-rgb), 0.35); color: #0a0e18; }
 
 /* Skeleton loading shimmer */
 .skeleton {

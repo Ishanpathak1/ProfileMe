@@ -361,9 +361,9 @@ export default function SoundActionsPage() {
           <span
             className="badge"
             style={{
-              backgroundColor: isListening ? "#133a2a" : "#2a2f3a",
-              color: isListening ? "#1de9b6" : "#9aa3b2",
-              border: isListening ? "1px solid rgba(29,233,182,0.35)" : "1px solid rgba(255,255,255,0.08)",
+              backgroundColor: isListening ? "rgba(var(--accent-rgb), 0.14)" : "rgba(255,255,255,0.06)",
+              color: isListening ? "var(--accent)" : "var(--muted)",
+              border: isListening ? "1px solid rgba(var(--accent-rgb), 0.35)" : "1px solid rgba(255,255,255,0.08)",
               padding: "10px 12px",
             }}
           >
@@ -372,8 +372,8 @@ export default function SoundActionsPage() {
         </div>
       </div>
 
-      <div className="card elevated mb-3">
-        <div className="card-body d-flex align-items-center justify-content-between">
+      <div className="elevated mb-3">
+        <div className="d-flex align-items-center justify-content-between" style={{ padding: 16 }}>
           <div>
             <div style={{ fontWeight: 700 }}>Ledger Status: <span style={{ color: isConnected ? "#1de9b6" : "#9aa3b2" }}>{isConnected ? "Connected" : "Disconnected"}</span></div>
             <div className="muted" style={{ fontSize: 13 }}>
@@ -394,8 +394,8 @@ export default function SoundActionsPage() {
 
       <div className="row g-4">
         <div className="col-12 col-lg-5">
-          <div className="card elevated">
-            <div className="card-body">
+          <div className="elevated">
+            <div className="card-body" style={{ padding: 16 }}>
               <h5 className="card-title mb-3" style={{ fontWeight: 700 }}>Controls</h5>
               <div className="d-flex gap-2">
                 {!isListening ? (
@@ -414,8 +414,8 @@ export default function SoundActionsPage() {
             </div>
           </div>
 
-          <div className="card elevated mt-4" style={{ minHeight: 260 }}>
-            <div className="card-body d-flex flex-column" style={{ gap: 8 }}>
+          <div className="elevated mt-4" style={{ minHeight: 260 }}>
+            <div className="d-flex flex-column" style={{ gap: 8, padding: 16 }}>
               <div className="d-flex align-items-center justify-content-between">
                 <h5 className="card-title m-0" style={{ fontWeight: 700 }}>Live Log</h5>
                 <button
@@ -461,8 +461,8 @@ export default function SoundActionsPage() {
         </div>
 
         <div className="col-12 col-lg-7">
-          <div className="card elevated">
-            <div className="card-body">
+          <div className="elevated">
+            <div className="card-body" style={{ padding: 16 }}>
               <div className="d-flex align-items-center justify-content-between mb-3">
                 <h5 className="card-title m-0" style={{ fontWeight: 700 }}>Frequency ↦ Action Mappings</h5>
                 <button
@@ -479,9 +479,9 @@ export default function SoundActionsPage() {
                   <span
                     className="badge"
                     style={{
-                      backgroundColor: "#133a2a",
-                      color: "#1de9b6",
-                      border: "1px solid rgba(29,233,182,0.35)",
+                      backgroundColor: "rgba(var(--accent-rgb), 0.14)",
+                      color: "var(--accent)",
+                      border: "1px solid rgba(var(--accent-rgb), 0.35)",
                       padding: "8px 10px",
                       fontSize: 12,
                     }}
@@ -536,7 +536,7 @@ export default function SoundActionsPage() {
                               Edit
                             </button>
                             <button
-                              className={`btn btn-sm ${canEdit(Boolean(attestation) && isConnected) ? "btn-outline-danger" : "btn-outline-secondary"}`}
+                              className={`btn btn-sm ${canEdit(Boolean(attestation) && isConnected) ? "btn-outline-secondary" : "btn-outline-secondary"}`}
                               onClick={() => handleDelete(m)}
                               disabled={!canEdit(Boolean(attestation) && isConnected)}
                               title={canEdit(Boolean(attestation) && isConnected) ? "" : "Attach + attest with Ledger to edit mappings."}
