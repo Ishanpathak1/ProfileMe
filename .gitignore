@@ -37,6 +37,7 @@ coverage/
 contracts/artifacts/
 contracts/cache/
 contracts/broadcast/
+contracts/node_modules/
 contracts/out/
 contracts/.openzeppelin/
 contracts/.foundry-cache/
